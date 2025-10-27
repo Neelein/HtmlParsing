@@ -1,20 +1,25 @@
 package elements
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type Element struct {
 	elementType  string
 	childElement []*Element
 	innerText    string
 	class        string
+	attribute    map[string]string
 }
 
-func CreateElement(elementType string, innerText string, class string) Element {
+func CreateElement(elementType string, innerText string, class string, attribute map[string]string) Element {
 	element := Element{
 		elementType:  elementType,
 		innerText:    innerText,
 		class:        class,
 		childElement: nil,
+		attribute:    attribute,
 	}
 
 	return element
@@ -34,7 +39,14 @@ func (e *Element) JsonString() string {
 }
 
 func parsingToHtml(element *Element) string {
-	elementstring := fmt.Sprintf("<%s>%s", (*element).elementType, (*element).innerText)
+	var stringBuilder strings.Builder
+	for key, valu := range (*element).attribute {
+		stringBuilder.WriteString(fmt.Sprintf("%s='%s'", key, valu))
+	}
+
+	attributeString := stringBuilder.String()
+
+	elementstring := fmt.Sprintf("<%s class='%s' %s>%s", (*element).elementType, (*element).class, attributeString, (*element).innerText)
 
 	if (*element).childElement == nil {
 		elementstring += fmt.Sprintf("</%s>", (*element).elementType)
