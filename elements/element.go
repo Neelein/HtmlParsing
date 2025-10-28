@@ -39,17 +39,30 @@ func (e *Element) JsonString() string {
 }
 
 func parsingToHtml(element *Element) string {
+
 	var stringBuilder strings.Builder
+	elementstring := ""
+	calssString := ""
 	for key, valu := range (*element).attribute {
 		stringBuilder.WriteString(fmt.Sprintf("%s='%s'", key, valu))
 	}
 
+	if (*element).class != "" {
+		calssString = fmt.Sprintf("class='%s'", (*element).class)
+	}
+
 	attributeString := stringBuilder.String()
 
-	elementstring := fmt.Sprintf("<%s class='%s' %s>%s", (*element).elementType, (*element).class, attributeString, (*element).innerText)
+	if (*element).elementType == "link" {
+		elementstring = fmt.Sprintf("<%s %s %s/>", (*element).elementType, calssString, attributeString)
+	} else {
+		elementstring = fmt.Sprintf("<%s %s %s>%s", (*element).elementType, calssString, attributeString, (*element).innerText)
+	}
 
 	if (*element).childElement == nil {
-		elementstring += fmt.Sprintf("</%s>", (*element).elementType)
+		if (*element).elementType != "link" {
+			elementstring += fmt.Sprintf("</%s>", (*element).elementType)
+		}
 		return elementstring
 	} else {
 		for _, element := range (*element).childElement {
