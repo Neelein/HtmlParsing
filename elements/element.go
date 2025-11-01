@@ -38,6 +38,10 @@ func (e *Element) JsonString() string {
 	return parsingToHtml(e)
 }
 
+func (e *Element) RemoveChildElement(index int) {
+	(*e).childElement = append((*e).childElement[:index], (*e).childElement[index+1:]...)
+}
+
 func parsingToHtml(element *Element) string {
 
 	var stringBuilder strings.Builder

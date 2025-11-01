@@ -1,12 +1,20 @@
 package main
 
 import (
+	"bufio"
 	"htmlParser/elements"
+	"htmlParser/operators"
+	"os"
+	"strings"
 )
 
 func main() {
 
-	const fileName = "index.html"
+	reader := bufio.NewReader(os.Stdin)
+	userInput, _ := reader.ReadString('\n')
+
+	fileName := strings.TrimSpace(userInput)
+
 	styleAttrubute := map[string]string{"rel": "stylesheet", "type": "text/css", "href": "index.css"}
 	html := elements.CreateElement("html", "", "", nil)
 	link := elements.CreateElement("link", "", "", styleAttrubute)
@@ -19,6 +27,7 @@ func main() {
 	div.AddChildElement(&div3)
 	div2.AddChildElement(&p)
 	html.AddChildElement(&div)
+	div.RemoveChildElement(0)
 	htmlContent := html.JsonString()
-	createHtmlFile(fileName, htmlContent)
+	operators.CreateHtmlFile(fileName, htmlContent)
 }
