@@ -1,6 +1,7 @@
 package elements
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -11,15 +12,17 @@ type Element struct {
 	innerText    string
 	class        string
 	attribute    map[string]string
+	id           string
 }
 
-func CreateElement(elementType string, innerText string, class string, attribute map[string]string) Element {
+func CreateElement(elementType string, innerText string, class string, attribute map[string]string, id string) Element {
 	element := Element{
 		elementType:  elementType,
 		innerText:    innerText,
 		class:        class,
 		childElement: nil,
 		attribute:    attribute,
+		id:           id,
 	}
 
 	return element
@@ -76,4 +79,34 @@ func parsingToHtml(element *Element) string {
 	}
 	elementstring += fmt.Sprintf("</%s>", (*element).elementType)
 	return elementstring
+}
+
+func (e *Element) GetElementById(id string) (*Element, error) {
+	element := findElementById(id, e)
+	if element != nil {
+		return element, nil
+	} else {
+		return nil, errors.New("Cant find the element")
+	}
+}
+
+func findElementById(id string, element *Element) *Element {
+	var elements []*Element
+	for _, ele := range (*element).childElement {
+		if (*ele).id == id {
+			return ele
+		}
+		if len(ele.childElement) > 0 {
+			elements = append(elements, ele)
+		}
+	}
+
+	if len(elements) > 0 {
+		for _, ele := range elements {
+			if findElementById(id, ele) != nil {
+				return findElementById(id, ele)
+			}
+		}
+	}
+	return nil
 }
