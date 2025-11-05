@@ -28,8 +28,13 @@ func CreateElement(elementType string, innerText string, class string, attribute
 	return element
 }
 
-func (e *Element) AddChildElement(element *Element) {
+func (e *Element) AddChildElement(element *Element) error {
+	if checkIdExist((*element).id, e) != nil {
+		errorString := fmt.Sprintf("Id %s is exist!!", (*element).id)
+		return errors.New(errorString)
+	}
 	(*e).childElement = append((*e).childElement, element)
+	return nil
 }
 
 func (e *Element) DisPlayFile() {
@@ -108,5 +113,17 @@ func findElementById(id string, element *Element) *Element {
 			}
 		}
 	}
+	return nil
+}
+
+func checkIdExist(id string, element *Element) *Element {
+	if id == "" {
+		return nil
+	}
+
+	if findElementById(id, element) != nil {
+		return element
+	}
+
 	return nil
 }
